@@ -7,14 +7,10 @@ import 'package:app/model/clslist.dart';
 import 'package:http/http.dart' as http;
 
 class Apiservice {
+  static const ip = '192.168.100.223';
   // ignore: constant_identifier_names
-  static const api = 'https://jsonplaceholder.typicode.com/albums/';
-
-  static const app = 'http://192.168.100.223:5050/api';
-
-  static const ap = 'http://192.168.100.223:5050/api/';
-
-  static const add = 'http://192.168.100.223/SQL/add';
+  //static const api = 'https://jsonplaceholder.typicode.com/albums/';
+  static const app = 'http://' + ip + ':5050/api';
 
   static const headers = {'Content-Type': 'application/json'};
 
@@ -36,7 +32,7 @@ class Apiservice {
   }
 
   Future<Apires<Utilapi>> getapi(String i) {
-    return http.get(Uri.parse(ap + i)).then((data) {
+    return http.get(Uri.parse(app + '/' + i)).then((data) {
       final err = Utilapi(id: 0, name: 'Error', TpUser: 2);
       if (data.statusCode == 200) {
         final jsonData = json.decode(data.body);
@@ -46,20 +42,37 @@ class Apiservice {
       return Apires<Utilapi>(data: err, errorMessage: "Error", error: true);
     });
   }
-/*
-  Future<Apires<bool>> putNew(Newapi item) {
-    return http
-        .post(Uri.parse(add),
-            headers: headers, body: json.encode(item.toJson()))
-        .then((value) {
+
+  bool postNew(String a, String b) {
+    String send = app + '?a=' + a + '&b=' + b;
+    http.post(Uri.parse(send), headers: headers).then((value) {
       if (value.statusCode == 201) {
-        return Apires<bool>(data: true, errorMessage: "None");
+        return true;
       }
-      return Apires<bool>(data: false, errorMessage: "Error", error: true);
-    }).catchError((_) => Apires<bool>(
-            error: true, errorMessage: "An error ocurred", data: false));
+    });
+    return false;
   }
 
+  bool putUpdate(String a, String b, String c) {
+    String send = app + '?a=' + a + '&b=' + b + '&id= ' + c;
+    http.put(Uri.parse(send), headers: headers).then((value) {
+      if (value.statusCode == 201) {
+        return true;
+      }
+    });
+    return false;
+  }
+
+  bool delDelete(String a) {
+    String send = app + '?a=' + a;
+    http.delete(Uri.parse(send), headers: headers).then((value) {
+      if (value.statusCode == 201) {
+        return true;
+      }
+    });
+    return false;
+  }
+/*
   List<Datasapi> getapilist() {
     return [
       Datasapi(id: 1, name: "Admin", TpUser: 1),

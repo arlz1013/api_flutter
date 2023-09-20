@@ -72,7 +72,8 @@ class _listState extends State<list> {
                   onDismissed: (direction) {},
                   confirmDismiss: (direction) async {
                     final res = await showDialog(
-                        context: context, builder: (_) => const DelData());
+                        context: context,
+                        builder: (_) => DelData(id: _apires.data[index].id));
                     return res;
                   },
                   background: Container(

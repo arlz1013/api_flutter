@@ -1,6 +1,7 @@
 // ignore_for_file: unused_import, unused_field, use_build_context_synchronously
 
 import 'package:app/model/api.dart';
+import 'package:app/model/apilist.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:app/services/services.dart';
@@ -17,16 +18,14 @@ class Modify extends StatefulWidget {
 class _ModifyState extends State<Modify> {
   // ignore: unnecessary_null_comparison
   bool get _isEditing => widget.id != 0;
-
   Apiservice get serv => GetIt.I<Apiservice>();
-
   late String errorMessage;
-
   late Utilapi api;
+  late String send;
+  late String title;
 
   final TextEditingController _namectl = TextEditingController();
   final TextEditingController _contctl = TextEditingController();
-
   late bool _isLoading = true;
 
   @override
@@ -77,21 +76,34 @@ class _ModifyState extends State<Modify> {
                       child: ElevatedButton(
                           onPressed: () async {
                             if (!_isEditing) {
-                              const title = 'Sendly';
-                              showDialog(
-                                  context: context,
-                                  builder: (_) => AlertDialog(
-                                        title: const Text(title),
-                                        content: const Text("A"),
-                                        actions: <Widget>[
-                                          TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: const Text('Ok'))
-                                        ],
-                                      ));
-                            } else {}
+                              title = "Sendly";
+                              if (!serv.postNew(_namectl.text, _contctl.text)) {
+                                send = "User Createl";
+                              } else {
+                                send = "Error";
+                              }
+                            } else {
+                              title = "Edit";
+                              if (!serv.putUpdate(_namectl.text, _contctl.text,
+                                  widget.id.toString())) {
+                                send = "Usuario Actualizado";
+                              } else {
+                                send = "Error";
+                              }
+                            }
+                            showDialog(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                      title: Text(title),
+                                      content: Text(send),
+                                      actions: <Widget>[
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text('Ok'))
+                                      ],
+                                    ));
                           },
                           child: const Text('Submit')))
                 ],
